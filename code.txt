@@ -1,0 +1,782 @@
+n
+data = [
+        ['T100',['I1','I2','I5']],
+        ['T200',['I2','I4']],
+        ['T300',['I2','I3']],
+        ['T400',['I1','I2','I4']],
+        ['T500',['I1','I3']],
+        ['T600',['I2','I3']],
+        ['T700',['I1','I3']],
+        ['T800',['I1','I2','I3','I5']],
+        ['T900',['I1','I2','I3']]
+        ]
+
+conf = 0.01
+
+init = []
+for i in data:
+    for q in i[1]:
+        if(q not in init):
+            init.append(q)
+
+init = sorted(init)
+print(init)
+
+sp = 0.4
+s = int(sp * len(init))
+print(s)
+
+from collections import Counter
+c = Counter()
+for i in init:
+    for d in data:
+        if(i in d[1]):
+            c[i]+=1
+
+print("C1: ")
+for i in c:
+    print(str([i])+": "+str(c[i]))
+print()
+
+l = Counter()
+for i in c:
+    if(c[i] >= s):
+        l[frozenset([i])]+=c[i]
+
+print("L1: ")
+for i in l:
+    print(str(list(i))+": "+ str(l[i]))
+print()
+
+pl = l
+pos = 1
+
+for count in range(2,1000):
+    nc = set()
+    temp = list(l)
+    for i in range(0, len(temp)):
+        for j in range(i+1,len(temp)):
+            t = temp[i].union (temp[j])
+            if (len(t) == count):
+                nc.add(temp[i].union (temp[j]))
+
+    nc = list(nc)
+    c = Counter()
+    for i in nc:
+        c[i]=0
+        for q in data:
+            temp = set(q[1])
+            if(i.issubset (temp)):
+                c[i]+=1
+
+    print("C"+str(count)+": ")
+    for i in c:
+        print(str(list(i))+": "+ str(c[i]))
+    print()
+
+    l = Counter()
+    for i in c:
+        if(c[i]>=s):
+            l[i]+=c[i]
+
+    print("L"+str(count)+": ")
+    for i in l:
+        print(str(list(i))+": "+ str(l[i]))
+    print()
+
+    if(len(l)==0):
+        break
+    pl = l
+    pos = count
+
+    print("Result: ")
+    print("L"+str(pos)+": ")
+    for i in pl:
+        print(str(list(i))+": "+ str(pl[i]))
+    print()
+
+l = []
+for x in pl:
+    temp = list(x)
+    l.append(temp)
+
+print(l)
+
+from itertools import combinations
+
+for i in l:
+    print()
+    print("For ",i)
+    ab = frozenset(i)
+    abfreq = pl[ab]
+    print(abfreq)
+
+    for j in range(1,len(i)):
+        c = [frozenset(q) for q in combinations(i,j)]
+
+        for a in c:
+            b = ab - a
+            afreq = 0
+            for d in data:
+                temp = set(d[1])
+                if(a.issubset(temp)):
+                    afreq +=1
+
+            temp = abfreq / afreq
+
+            if(temp >= conf):
+                  print(a," -> ",b,"  :  ",(temp*100),"%")
+
+
+
+
+
+
+
+
+
+*************************************************************************** KMEANS ************************************************************************
+
+import pandas as pd
+import numpy as np
+data = pd.read_csv('gg.csv')
+
+dataset=data[['No of users']]
+print(dataset)
+import random
+def init_centroids(k,dataset):
+    centroids=[]
+    for i in range(0,k):
+        point=[]
+        for col in dataset.columns:
+            point.append(random.uniform(min(dataset[col]),max(dataset[col])))
+        centroids.append(point)
+    return centroids
+
+import math
+def calcdist(dataset,cluster):
+    dist = 0
+    for idx in range(len(dataset.columns)-1):
+        dist += (dataset[dataset.columns[idx]]-cluster[idx])**2
+    dist = dist**(1/2)
+    return dist
+def kmeans(k,dataset):
+    centroids = init_centroids(k,dataset)
+    dataset['Cluster'] = 0
+    original = dataset['Cluster']
+    while True:
+        dist = pd.Series([math.inf] * len(dataset))
+        for idx in range(len(centroids)):
+            point = centroids[idx]
+            dataset.loc[calcdist(dataset,point)<=dist,['Cluster']] = idx
+            dist = pd.concat([dist, calcdist(dataset,point)], axis=1).min(axis=1)
+        for idx in range(len(centroids)):
+            centroids[idx] =list(dataset[dataset['Cluster']==idx][dataset.columns[0:-1]].mean(axis=0))
+        if dataset['Cluster'].eq(original, axis=0).all():
+            return dataset,centroids
+        else:
+            original = dataset['Cluster']
+
+
+k = int(input('Enter number of clusters : '))
+ct = init_centroids(k,dataset)
+result,centroids = kmeans(k,dataset)
+print(result)
+
+gg.csv
+
+No of users	ModeOfTransport
+5	Bus
+6	Train
+4	Bus
+7	Bus
+13	Train
+15	Train
+20	Train
+18	Bus
+9	Train
+
+
+
+*************************************************************************** KMEANS ***************************************************************************
+
+
+*************************************************************************** Naive Bayes ************************************************************************
+import pandas as pd
+
+data = pd.read_csv("prac.csv")
+
+print(data.head(3))
+
+userdata = ['sunny','cool','high','True']
+
+nocount = 0
+yescount = 0
+count =0
+
+for i in data['class']:
+    if(i == 'no'):
+        nocount += 1
+    else:
+        yescount+=1
+    count+=1
+
+yesp = yescount/count
+nop = nocount / count
+
+
+outlook = list(data['outlook'])
+temperature =list(data['temperature'])
+humidity = list(data['humidity'])
+windy = list(data['windy'])
+output = list(data['class'])
+
+# for yes and no
+outlookcount = 0
+outlookyescount = 0
+outlooknocount = 0
+
+tempcount = 0
+tempcountyes = 0
+tempcountno = 0
+
+humicount = 0
+humicountyes = 0
+humicountno = 0
+
+windycount = 0
+windycountyes = 0
+windycountno = 0
+
+for i in range(0,len(outlook)):
+   
+    if(outlook[i]==userdata[0]):
+ 
+        outlookcount += 1
+        if(output[i]=='yes'):
+            outlookyescount += 1
+        else:
+            outlooknocount +=1
+    
+    if(temperature[i]==userdata[1]):
+       
+        tempcount += 1
+        if(output[i]=='yes'):
+            tempcountyes += 1
+        else:
+            tempcountno +=1
+
+    if(humidity[i]==userdata[2]):
+   
+        humicount += 1
+        if(output[i]=='yes'):
+            humicountyes += 1
+        else:
+            humicountno +=1
+
+    if(str(windy[i])==userdata[3]):
+      
+        windycount += 1
+        if(output[i]=='yes'):
+            windycountyes += 1
+        else:
+            windycountno +=1
+
+outlookp = outlookcount/count
+tempp = tempcount/count
+humidityp = humicount/count
+windyp = windycount/count
+
+classyesp = (outlookyescount*tempcountyes*humicountyes*windycountyes)/(((yescount)**3)*count)
+classnop = (outlooknocount*tempcountno*humicountno*windycountno)/(((nocount)**3)*count)
+
+print(classyesp,classnop)
+
+if(classyesp > classnop):
+    print("class : yes ",classyesp)
+else:
+    print("class : no ",classnop)
+
+
+*************************************************************************** Naive Bayes **********************************************************************
+
+
+************************************************************************** Apriori ***************************************************************************
+
+
+data = [
+        ['T3001',['MUM','DEL','RAI']],
+        ['T3002',['DEL','HAR']],
+        ['T3003',['DEL','GOA']],
+        ['T3004',['MUM','DEL','HAR']],
+        ['T3005',['MUM','GOA']],
+        ['T3006',['DEL','GOA']],
+        ['T3007',['MUM','GOA']],
+        ['T3008',['MUM','DEL','GOA','RAI']],
+        ['T3009',['MUM','DEL','GOA']]
+        ]
+
+init = []
+for i in data:
+    for q in i[1]:
+        if(q not in init):
+            init.append(q)
+init = sorted(init)
+print(init)
+
+sp = 0.5
+s = int(sp*len(init))
+
+from collections import Counter
+
+c = Counter()
+for i in init:
+    for d in data:
+        if(i in d[1]):
+            c[i]+=1
+print("C1:")
+for i in c:
+    print(str([i])+": "+str(c[i]))
+print()
+l = Counter()
+for i in c:
+    if(c[i] >= s):
+        l[frozenset([i])]+=c[i]
+print("L1:")
+for i in l:
+    print(str(list(i))+": "+str(l[i]))
+print()
+pl = l
+pos = 1
+for count in range (2,1000):
+    nc = set()
+    temp = list(l)
+    for i in range(0,len(temp)):
+        for j in range(i+1,len(temp)):
+            t = temp[i].union(temp[j])
+            if(len(t) == count):
+                nc.add(temp[i].union(temp[j]))
+    nc = list(nc)
+    c = Counter()
+    for i in nc:
+        c[i] = 0
+        for q in data:
+            temp = set(q[1])
+            if(i.issubset(temp)):
+                c[i]+=1
+    print("C"+str(count)+":")
+    for i in c:
+        print(str(list(i))+": "+str(c[i]))
+    print()
+    l = Counter()
+    for i in c:
+        if(c[i] >= s):
+            l[i]+=c[i]
+    print("L"+str(count)+":")
+    for i in l:
+        print(str(list(i))+": "+str(l[i]))
+    print()
+    if(len(l) == 0):
+        break
+    pl = l
+    pos = count
+print("Result: ")
+print("L"+str(pos)+":")
+for i in pl:
+    print(str(list(i))+": "+str(pl[i]))
+print()
+
+from itertools import combinations
+for l in pl:
+    c = [frozenset(q) for q in combinations(l,len(l)-1)]
+    mmax = 0
+    for a in c:
+        b = l-a
+        ab = l
+        sab = 0
+        sa = 0
+        sb = 0
+        for q in data:
+            temp = set(q[1])
+            if(a.issubset(temp)):
+                sa+=1
+            if(b.issubset(temp)):
+                sb+=1
+            if(ab.issubset(temp)):
+                sab+=1
+        temp = sab/sa*100
+        if(temp > mmax):
+            mmax = temp
+        temp = sab/sb*100
+        if(temp > mmax):
+            mmax = temp
+        print(str(list(a))+" -> "+str(list(b))+" = "+str(sab/sa*100)+"%")
+        print(str(list(b))+" -> "+str(list(a))+" = "+str(sab/sb*100)+"%")
+    curr = 1
+    print("choosing:", end=' ')
+    for a in c:
+        b = l-a
+        ab = l
+        sab = 0
+        sa = 0
+        sb = 0
+        for q in data:
+            temp = set(q[1])
+            if(a.issubset(temp)):
+                sa+=1
+            if(b.issubset(temp)):
+                sb+=1
+            if(ab.issubset(temp)):
+                sab+=1
+        temp = sab/sa*100
+        if(temp == mmax):
+            print(curr, end = ' ')
+        curr += 1
+        temp = sab/sb*100
+        if(temp == mmax):
+            print(curr, end = ' ')
+        curr += 1
+    print()
+    print()
+
+
+
+
+************************************************************************** Apriori ***************************************************************************
+
+
+*************************************************************************** PageRank and Hit *****************************************************************
+
+import numpy as num
+
+graph = {
+    'b' : ['a','c','d', 'e'],
+    'a' : ['d', 'c'],
+    'c' : ['d','b', 'e'],
+    'd' : ['b','c'],
+    'e' : ['b','c','d']
+}
+iterationNo = 7
+
+print("Graph")
+print(graph)
+
+# print(graph['b'].count('a'))
+
+A = []
+
+for i in graph.keys():
+    a = []
+    for j in graph.keys():
+        if(graph[j].count(i)!=0):
+            a.append(1/len(graph[j]))
+        else:
+            a.append(0)
+    A.append(a)
+print("Page rank Matrix")
+for i in A:
+    for j in i:
+        print(j,' ',end=" "),
+    print('')
+
+B = []
+
+for i in range(0,len(A)):
+    B.append([1])
+print("Iteration Table")
+print(B)
+
+for i in range(0,iterationNo):
+    C = num.matmul(A,B)
+    print(C)
+
+
+*************************************************************************** PageRank and Hit **************************************************************************
+Zeel ne bheja hai sahi wala page rank
+
+
+import numpy as np
+n = int(input ("Enter the number of websites: ")) 
+relation = np.empty((n, n))
+for i in range (0, n):
+  print ( f"Enter '1' if website {i} contains a hyperlink directing to following website (s) else enter '0': ")
+  for j in range (0, n):
+    x = int(input(f"website {j}: ")) 
+    relation[i, j] = x 
+    
+print(relation)
+pageRank = []
+
+for i in range (0, n): 
+  pageRank.append(1/n)
+
+print("Initially the page rank for each page is: ", pageRank)
+
+m = 0
+while m < 3:
+  m = m + 1
+  for i in range (0, n): 
+    temp = [] 
+    for j in range (0, n):
+      if relation [j][i] == 1:
+        count = 0 
+      for k in range (0, n):
+        if relation [j][k] == 1: 
+            count = count + 1 
+            y = pageRank[j]/count
+  temp.append (y)
+  # print (temp)
+  pageRank[i] = sum(temp)
+  print(f"The new Page Ranks after iteration {m} are: ", pageRank)
+
+print(f"Website {pageRank.index(max(pageRank))+1} has the highest page rank whereas Website {pageRank.index(min(pageRank)) +1} has the lowest page rank.")
+
+
+***************************************************************************OLAP OPerations ***************************************************************************
+
+1. OWNER DIMENSION TABLE
+CREATE TABLE owner_co
+(
+owner_id varchar(20) not null,
+Name char not null,
+gst_in varchar(20) not null,
+ownership_type varchar(20) not null
+primary key owner_id
+);
+
+2. WAREHOUSE DIMENSION TABLE
+CREATE TABLE warehouse
+(
+warehouse_id varchar(20) not null,
+war_Name char not null,
+location varchar(20) not null,
+capacity varchar(20) not null
+primary key warehouse_id
+);
+
+3. USER DIMENSION TABLE
+CREATE TABLE war_user
+(
+user_id varchar(20) not null,
+Name char not null,
+phone_no varchar(20) not null,
+address varchar(20) not null,
+email_id varchar(20) not null,
+age varchar(10) not null
+primary key user_id
+);
+
+4. BUCKET DIMENSION TABLE
+CREATE TABLE buckets
+(
+bucket_id varchar(20) not null,
+bucket_Name char not null,
+ip varchar(20) not null,
+capacity varchar(20) not null,
+highest_response_time varchar(20) not null,
+average_response_time varchar(10) not null,
+total_errors varchar(20) not null
+primary key bucket_id
+);
+
+5. FILES DIMENSION TABLE
+CREATE TABLE files
+(
+file_id varchar(20) not null,
+Name varchar(20) not null,
+type varchar(20) not null,
+created_date varchar(20) not null,
+number_of_times_accessed varchar(20) not null,
+source_data varchar(20) not null
+primary key file_id
+);
+
+6. FACT TABLE
+CREATE TABLE Data_Fact
+(
+data_id varchar(20) NOT NULL,
+owner_id varchar(20) NOT NULL,
+warehouse_id varchar(20) NOT NULL,
+user_id varchar(20) NOT NULL,
+bucket_id varchar(20) NOT NULL,
+file_id varchar(20) NOT NULL,
+warehouse_Count INT NOT NULL,
+bucket_Count INT NOT NULL,
+files_Count INT NOT NULL,
+PRIMARY KEY (Data_iD),
+FOREIGN KEY (OWNER_ID) REFERENCES owner_co (owner_id),
+FOREIGN KEY (warehous_id) REFERENCES warehouse(warehouse_ID),
+FOREIGN KEY (user_id) REFERENCES war_user (user_ID),
+FOREIGN KEY (bucket_ID) REFERENCES buckets (bucket_ID) ,
+FOREIGN KEY (file_ID) REFERENCES buckets (file_ID)
+);
+
+SQL QUERIES TO POPULATE DIMENSION TABLES
+
+INSERT INTO owner_co(owner_id , Name ,gst_in,ownership_type)
+VALUES
+(1,'H',1011,'PRIVATE');
+(2,'p',1012,'PRIVATE'),
+(3,'k',1013,'Public'),
+(4,'l',1014,'PRIVATE'),
+(5,'j',1015,'Public')
+;
+
+INSERT INTO warehouse(warehouse_id , war_Name ,location,capacity)
+VALUES
+(11,'earth','mumbai','500tb'),
+(12,'air','mumbai','200tb'),
+(13,'fire','delhi','300tb'),
+(14,'stone','delhi','400tb'),
+(15,'water','mumbai','600tb')
+;
+
+INSERT INTO war_user(user_id ,Name ,phone_no,address,email_id,age)
+VALUES
+(1,'harsh','234536','mumbai','h@gmail',20),
+(2,'pankaj','45637','delhi','p56@gmail',19),
+(3,'sahil','89763','mumbai','s@gmail',21),
+(4,'sakshi','56783','agra','sakshi21@gmail',23),
+(5,'rohan','45678','delhi','r@gmail',25)
+
+INSERT INTO buckets(bucket_id ,bucket_Name
+,ip,capacity,highest_response_time,average_response_time,total_errors)
+VALUES
+(1,'half','1.0.1.1','50gb','100','20','20'),
+(2,'full','1.0.1.2','100gb','200','10','50'),
+(3,'partial','1.0.1.3','50gb','400','30','20'),
+(4,'hallow','1.0.1.4','60gb','100','60','20'),
+(5,'spirit','1.0.1.5','50gb','100','30','20')
+;
+
+INSERT INTO files(file_id ,Name
+,type,created_date,number_of_times_accessed,source_data)
+VALUES
+(1,'cdrive','public','1-2-2022','10','data.csv'),
+(2,'ddrive','public','1-6-2022','30','file.csv'),
+(3,'frive','private','3-2-2022','40','data.csv'),
+(4,'udrive','public','12-6-2022','50','data.mp4'),
+(5,'gdrive','private','1-5-2022','10','file.jpg')
+;
+
+INSERT INTO files(file_id ,Name ,type,created_date,number_of_times_accessed,source_data)
+VALUES
+(6,'cdrive','public','1-2-2022','60','data.csv'),
+(7,'ddrive','public','1-6-2022','50','file.csv');
+
+MATERIALIZED VIEWS
+1. Materialized view for private owners
+CREATE MATERIALIZED VIEW LOG ON owner_co;
+CREATE MATERIALIZED VIEW mv_owner
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM owner_co WHERE ownership_type = 'PRIVATE';
+
+
+2. Materialized view for specific location
+CREATE MATERIALIZED VIEW LOG ON warehouse;
+CREATE MATERIALIZED VIEW mv_type
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM warehouse WHERE location = 'delhi';
+
+3. Materialized view for particular age
+CREATE MATERIALIZED VIEW LOG ON war_user;
+CREATE MATERIALIZED VIEW mv_age
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM war_user WHERE age> = 20;
+4. Materialized view for total number of errors
+CREATE MATERIALIZED VIEW mv_errors
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM buckets where total_errors < 10 ;
+
+5. Materialized view for number of times accessed
+CREATE MATERIALIZED VIEW LOG ON files;
+CREATE MATERIALIZED VIEW mv_access
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM files ORDER BY number_of_times_accessed DESC;
+
+6. Materialized view for all files
+CREATE MATERIALIZED VIEW mv_files
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS SELECT * FROM files;
+
+Oracle SQL OLAP Operations Queries: -
+
+1. SELECT * FROM owner_co
+where ownership_type = 'PRIVATE';
+
+2.
+SELECT * FROM war_user
+SELECT user_id, Name, address, war_name , location
+ FROM warehouse,war_user
+ WHERE address = location ;
+ 
+3.
+SELECT * FROM war_user
+where age >= 20;
+
+4. SELECT *
+FROM war_user
+ORDER BY age ASC;
+
+5. SELECT sum(total_errors) as errors FROM buckets
+
+
+
+***************************************************************************OLAP OPerations ***************************************************************************
+
+
+
+K-means:
+import random as ran
+def ckluck(m,x) :
+    for i in x:
+        min=abs(m[0][0]-i)
+        minref=0
+        for j in m:
+            if(abs(i-j[0]<=min)):
+                min = abs(i-j[0])
+                minref=m.index(j)
+            print(m[minref])
+        m[minref].append(i)
+    return m
+
+inp=input("Enter data: ")
+x=[int(i) for i in inp.split()]
+n=int(input("Enter number of clusters: ")) 
+print(x)
+m=[]
+red=[]
+while(n>0):
+    mt= [x[n-1]]
+    if mt not in m:
+        m.append(mt)
+        red.append(mt[0])
+        x.remove(mt[0])
+        print("m",m)
+        print("red",red)
+        print("x",x)
+        n-=1      
+
+m=ckluck(m,x)
+x=x+red
+mprev = [] 
+while(m!=mprev):
+    print("avg",m)
+    mprev=m.copy() 
+    for i in range(len(m)):
+        m[i]=[sum(m[i])/len(m[i])]
+    m=ckluck(m,x) 
+    for i in range(len(m)):
+        m[i].pop(0)
+
+print(m)
+
+
+
+
