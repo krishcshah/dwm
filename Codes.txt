@@ -1,0 +1,351 @@
+WC
+
+#1 Addition ,sub mul div
+
+<!doctype html>
+<html>
+<head>
+<script>
+var numOne, numTwo, res, temp;
+function fun()
+{
+  numOne = parseInt(document.getElementById("one").value);
+  numTwo = parseInt(document.getElementById("two").value);
+  if(numOne && numTwo)
+  {
+    temp = document.getElementById("res");
+    temp.style.display = "block";
+    res = numOne + numTwo;
+    document.getElementById("add").value = res;
+    res = numOne - numTwo;
+    document.getElementById("subtract").value = res;
+    res = numOne * numTwo;
+    document.getElementById("multiply").value = res;
+    res = numOne / numTwo;
+    document.getElementById("divide").value = res;
+  }
+}
+</script>
+</head>
+<body>
+
+<p id="input">Enter First Number: <input id="one">
+<br/><br/>
+Enter Second Number: <input id="two"></p>
+<p><button onclick="fun()">Add, Subtract, Multiply, Divide</button></p>
+<p id="res" style="display:none;">
+Addition Result = <input id="add"><br/><br/>
+Subtraction Result = <input id="subtract"><br/><br/>
+Multiplication Result = <input id="multiply"><br/><br/>
+Division Result = <input id="divide"></p>
+
+</body>
+</html>
+
+
+
+# 11 Addition of Matrix 
+
+<!DOCTYPE html>
+<html>
+<body>
+<h1>JS Matrix Addition</h1>
+
+<script>
+var i, j;
+var arr1 = [
+ [1, 1, 1],
+ [1, 1, 1],
+ [1, 1, 1]
+];
+var arr2 = [
+ [2, 2, 2],
+ [2, 2, 2],
+ [2, 2, 2]
+];
+var arr3 = [
+ [0, 0, 0],
+ [0, 0, 0],
+ [0, 0, 0],
+];
+
+document.write("Matrix A (3 x 3):<br>");
+for(i=0; i<3; i++)
+{
+ for(j=0; j<3; j++)
+  document.write(arr1[i][j] +" ");
+ document.write("<br>");
+}
+
+document.write("Matrix B (3 x 3):<br>");
+for(i=0; i<3; i++)
+{
+ for(j=0; j<3; j++)
+  document.write(arr2[i][j] +" ");
+ document.write("<br>");
+}
+
+document.write("Sum of Matrix:<br>");
+for(i=0; i<3; i++)
+{
+ for(j=0; j<3; j++)
+ {
+  arr3[i][j] = arr1[i][j] + arr2[i][j];
+  document.write(arr3[i][j] +" ");
+ }
+ document.write("<br>");
+}
+</script>
+</body>
+</html>
+
+
+
+#Multiplication
+<script>
+  
+// Javascript program to multiply
+// two square matrices.
+  
+const N = 4;
+  
+// This function multiplies
+// mat1[][] and mat2[][], and
+// stores the result in res[][]
+function multiply(mat1, mat2, res)
+{
+    let i, j, k;
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            res[i][j] = 0;
+            for (k = 0; k < N; k++)
+                res[i][j] += mat1[i][k] * mat2[k][j];
+        }
+    }
+}
+  
+// Driver Code
+    let i, j;
+      
+    // To store result
+    let res = new Array(N);
+    for (let k = 0; k < N; k++)
+        res[k] = new Array(N);
+          
+    let mat1 = [ [ 1, 1, 1, 1 ],
+                       [ 2, 2, 2, 2 ],
+                       [ 3, 3, 3, 3 ],
+                       [ 4, 4, 4, 4 ] ];
+  
+    let mat2 = [ [ 1, 1, 1, 1 ],
+                       [ 2, 2, 2, 2 ],
+                       [ 3, 3, 3, 3 ],
+                       [ 4, 4, 4, 4 ] ];
+  
+    multiply(mat1, mat2, res);
+  
+    document.write("Result matrix is <br>");
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++)
+            document.write(res[i][j] + " ");
+        document.write("<br>");
+    }
+  
+</script>
+
+#Stack
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+    
+    // add element to the stack
+    add(element) {
+        return this.items.push(element);
+    }
+    
+    // remove element from the stack
+    remove() {
+        if(this.items.length > 0) {
+            return this.items.pop();
+        }
+    }
+    
+    // view the last element
+    peek() {
+        return this.items[this.items.length - 1];
+    }
+    
+    // check if the stack is empty
+    isEmpty(){
+       return this.items.length == 0;
+    }
+   
+    // the size of the stack
+    size(){
+        return this.items.length;
+    }
+ 
+    // empty the stack
+    clear(){
+        this.items = [];
+    }
+}
+
+let stack = new Stack();
+stack.add(1);
+stack.add(2);
+stack.add(4);
+stack.add(8);
+console.log(stack.items);
+
+stack.remove();
+console.log(stack.items);
+
+console.log(stack.peek());
+
+console.log(stack.isEmpty());
+
+console.log(stack.size());
+
+stack.clear();
+console.log(stack.items);
+
+
+#Server Static
+const http=require("http");
+const server=http.createServer((req,res)=>{
+
+   if(req.url=="/"){
+      res.end("HI ");
+   }
+   else if(req.url=="/about"){
+      res.end("About: cS Chirag ");
+   }
+   else if(req.url=="/contact"){
+      res.end("Contact: 55525220552520");
+
+   }
+   else{
+      res.writeHead("404",{"Content-type": "text/html"});
+
+      res.end("<h2>Error 404 </h2>");
+   }
+});
+
+server.listen(7000,"",()=>{
+   console.log("Hi sever is listening on port 7000")
+})
+
+     ###################                 13 Currency Converter    ###################
+
+
+import "./styles.css";
+import { useEffect, useState } from 'react';
+import Axios from 'axios';
+import Dropdown from 'react-dropdown';
+import { HiSwitchHorizontal } from 'react-icons/hi';
+import 'react-dropdown/style.css';
+
+
+function App(){
+
+  const [info, setInfo] = useState([]);
+  const [input, setInput] = useState(0);
+  const [from, setFrom] = useState("usd");
+  const [to, setTo] = useState("inr");
+  const [options, setOptions] = useState([]);
+  const [output, setOutput] = useState(0);
+  
+  // Calling the api whenever the dependency changes
+  useEffect(() => {
+    Axios.get(
+`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from}.json`)
+   .then((res) => {
+      setInfo(res.data[from]);
+    })
+  }, [from]);
+  
+  // Calling the convert function whenever
+  // a user switches the currency
+  useEffect(() => {
+    setOptions(Object.keys(info));
+    convert();
+  }, [info])
+    
+  // Function to convert the currency
+  function convert() {
+    var rate = info[to];
+    setOutput(input * rate);
+  }
+  
+  // Function to switch between two currency
+  function flip() {
+    var temp = from;
+    setFrom(to);
+    setTo(temp);
+  }
+
+return (
+  <div className="App">
+  <div className="heading">
+    <h1>Currency converter</h1>
+  </div>
+  <div className="container">
+    <div className="left">
+      <h3>Amount</h3>
+      <input type="text" 
+         placeholder="Enter the amount" 
+         onChange={(e) => setInput(e.target.value)} />
+    </div>
+    <div className="middle">
+      <h3>From</h3>
+      <Dropdown options={options} 
+                onChange={(e) => { setFrom(e.value) }}
+      value={from} placeholder="From" />
+    </div>
+    <div className="switch">
+      <HiSwitchHorizontal size="30px" 
+                    onClick={() => { flip()}}/>
+    </div>
+    <div className="right">
+      <h3>To</h3>
+      <Dropdown options={options} 
+                onChange={(e) => {setTo(e.value)}} 
+      value={to} placeholder="To" />
+    </div>
+  </div>
+  <div className="result">
+    <button onClick={()=>{convert()}}>Convert</button>
+    <h2>Converted Amount:</h2>
+    <p>{input+" "+from+" = "+output.toFixed(2) + " " + to}</p>
+
+  </div>
+</div>
+);
+}
+
+export default App
+
+
+  ###################                 7 Read Write    ###################
+
+const xlsx=require("xlsx");
+// import xlsxFile from 'read-excel-file'
+const obj=[
+    {name:"bhavesh",rollno: "47",grade:"A"},
+    {name:"satyam",rollno: "40",grade:"A"},
+    {name:"sam",rollno: "100",grade:"B"},
+]
+
+const file_make=()=>{
+
+    const worksheet=xlsx.utils.json_to_sheet(obj);
+    const workbook=xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook,worksheet,"Bhavesh");
+    xlsx.writeFile(workbook,"Bhavesh.xlsx");
+}
+
+// readFileSync("Bhavesh.xlsx","utf")
+console.log(obj);
+file_make();
